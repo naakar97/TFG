@@ -1,0 +1,390 @@
+<div class="modal fade" id="buscarpcontacto_<?php echo $id; ?>" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+									<?php
+									$datos = $dbh->prepare("select * from empresas where id='$id' LIMIT 1");
+									$datos->execute();
+									$row = $datos->fetch();
+									$id = $row['id'];
+									$nom = $row['nombre'];
+									$datos = null;
+									?>
+									<div class="modal-dialog modal-dialog-centered modal-lg">
+										<div class="modal-content">
+											<div class="modal-header">
+												<h4 class="modal-title" id="myModalLabel">Agregar persona de contacto para la empresa:<strong><?php echo $nom . "<br>"; ?></strong></h4>
+												<button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
+											</div>
+											<div class="container-fluid">
+												<div style="margin: 10px;">
+													<button id="btnCrearNewContacto" class="btn btn-primary">
+														<i class="fas fa-plus"></i> Añadir
+													</button>
+												</div>
+												<div class="card-body" style="padding-top:5px; padding-bottom:5px;"></div>
+												<div id="busquedaTipoForm" class="row mb-4">
+													<div class="col-md-12">
+														<div class="form-group p-3 border rounded shadow-sm" style="background-color: #f9f9f9;">
+															<label for="autocompletepcontacto2" class="form-label fw-semibold" style="color: #555;">
+																Comprueba si ya existe:
+															</label>
+															<div class="input-group">
+																<input type="text" id="autocompletepcontacto2" class="form-control" placeholder="Buscar cliente..." style="padding: 0.5rem; border-radius: 0.25rem; border: 1px solid #ddd;">
+																<button id="mostrarFormularioBtn" class="btn btn-primary ms-2" style="padding: 0.5rem 1rem;">
+																	<i class="fas fa-search"></i> Buscar
+																</button>
+															</div>
+															<input type="hidden" id="contactoEncontrado" value="0">
+														</div>
+													</div>
+												</div>
+												<div id="pcontactoExistente" style="display: none;">
+													<form class="form" role="form" action="recform-addpcontacto-emp.php" method="POST" id="crearContactoExistente" enctype="multipart/form-data">
+														<div class="modal-body" style="overflow: auto;">
+															<input type="hidden" class="form-control" name="idempresa" value="<?php echo $row['id']; ?>">
+															<div class="row mb-4">
+																<div class="col-md-12">
+																	<div class="form-group">
+																		<label for="personaContacto">Persona de contacto (existente):</label>
+																		<input type="text" class="form-control mt-2" id="personaContacto" name="personaContacto" placeholder="" autofocus="autofocus" required>
+																	</div>
+																</div>
+															</div>
+															<input type="hidden" class="form-control" id="id_pcontactoau" name="id_pcontactoau" value="<?php echo $row['id']; ?>">
+															<input type="hidden" class="form-control" id="nombreempresa" name="nombreempresa" value="<?php echo $nom; ?>">
+															<div class="row mb-2">
+																<h4 class="form-label font-weight-bold">Datos corporativos de la persona de contacto:</h4>
+																<div class="col-sm-9 col-md-9">
+																	<div class="form-group">
+																		<label class="form-label font-weight-bold" for="cargo">Cargo:</label>
+																		<input id="cargo1" class="form-control" type="text" name="cargo" autocomplete="off">
+																	</div>
+																</div>
+																<div class="col-md-2 text-center">
+																	<div class="form-group">
+																		<legend class="font-weight-bold">Autorizado</legend>
+																		<label>
+																			<input class="form-check-input" type="radio" name="autorizado" id="autorizado_si1" value="Si"> Sí
+																		</label>
+																		<label class="pl-sm-3">
+																			<input class="form-check-input" type="radio" name="autorizado" id="autorizado_no1" value="No" checked=""> No
+																		</label>
+																	</div>
+																</div>
+															</div>
+															<div class="row mb-4">
+																<div class="col-sm-5 col-md-5">
+																	<div class="form-group">
+																		<label class="form-label font-weight-bold" for="departamento">Departamento:</label>
+																		<input id="departamento1" class="form-control" type="text" name="departamento" autocomplete="off">
+																	</div>
+																</div>
+																<div class="col-sm-3 col-md-3">
+																	<div class="form-group">
+																		<label class="form-label font-weight-bold" for="tlfcorporativo">Tlf. corporativo:</label>
+																		<input id="tlfcorporativo" class="form-control formatoTlf" type="text" name="tlfcorporativo" autocomplete="off">
+																	</div>
+																</div>
+																<div class="col-sm-4 col-md-4">
+																	<div class="form-group">
+																		<label class="form-label font-weight-bold" for="emailcorporativo">Email corporativo:</label>
+																		<input id="emailcorporativo" class="form-control" type="text" name="emailcorporativo" autocomplete="off">
+																	</div>
+																</div>
+															</div>
+															<div class="row mb-3">
+																<div class="col-sm-6" style="display: flex; margin: 0 auto; width: auto; gap: 35px;">
+																	<div class="form-check">
+																		<input class="form-check-input" type="checkbox" id="ccpresupuesto1" name="ccpresupuesto" value="1">
+																		<label class="form-check-label font-weight-bold" for="ccpresupuesto">
+																			¿Añadir en copia en presupuestos?
+																		</label>
+																	</div>
+
+																	<div class="form-check">
+																		<input class="form-check-input" type="checkbox" id="ccfactura1" name="ccfactura" value="1">
+																		<label class="form-check-label font-weight-bold" for="ccfactura">
+																			¿Añadir en copia en facturas?
+																		</label>
+																	</div>
+																</div>
+															</div>
+															<div class="modal-footer">
+																<button type="button" class="irAtras btn btn-lg btn-secondary d-flex align-items-center"><i class="fas fa-arrow-left me-2"></i> Volver</button>
+																<div class="ms-auto">
+																	<button type="button" class="btn btn-lg btn-danger" data-dismiss="modal">Cerrar</button>
+																	<button type="submit" name="addpcontact" id="addpcontact" class="btn btn-lg btn-primary" value="Enviar">Agregar</button>
+																</div>
+															</div>
+														</div>
+													</form>
+												</div>
+												<div id="pcontactoNuevo" style="display: none; padding: 15px;">
+													<form role="form" action="rec-pcontacto-modal-emp.php" method="POST" id="nuevocontacto" enctype="multipart/form-data" autocomplete="off">
+														<input type="hidden" class="form-control" name="idempresa" value="<?php echo $idemp; ?>">
+														<input type="hidden" class="form-control" name="nomempresa" value="<?php echo $nom; ?>">
+														<div class="row ">
+															<div class="col-md-12">
+																<div style="background-color: lightgrey;  border-radius: 25px;">
+																	<p class="form-label font-weight-bold mb-2" style="margin-left: 10px; padding: 3px;">Datos personales:</p>
+																</div>
+																<div class="row"><!-- row-1 -->
+																	<div class="col-sm-6">
+																		<div class="form-group">
+																			<label class="form-label font-weight-bold" for="nombreYapellidos">Nombre y Apellidos:</label>
+																			<input id="nombreYapellidos" class="form-control" type="text" name="nombreYapellidos" placeholder="Nombre y Apellidos" required>
+																		</div>
+																	</div>
+																	<div class="col-sm-3">
+																		<div class="form-group">
+																			<label class="form-label font-weight-bold" for="telefono2">Tlf. movíl:</label>
+																			<input type="text" class="form-control formatoTlf" id="telefono1" name="telefono1" placeholder="Movíl" autocomplete="off">
+																		</div>
+																	</div>
+																	<div class="col-sm-3">
+																		<div class="form-group">
+																			<label class="form-label font-weight-bold" for="telefono1">Tlf. fijo:</label>
+																			<input type="text" class="form-control formatoTlf" id="telefono2" name="telefono2" placeholder="Fijo" autocomplete="off">
+																		</div>
+																	</div>
+																</div><!-- ./ fin row-1 -->
+																<div class="row"><!-- row-2 -->
+																	<div class="col-sm-6">
+																		<div class="form-group">
+																			<label class="form-label font-weight-bold" for="email1">Email Personal:</label>
+																			<input type="email" class="form-control" id="email1" name="email1" placeholder="Email" autocomplete="off">
+																		</div>
+																	</div>
+																	<div class="col-sm-6">
+																		<div class="form-group">
+																			<label class="form-label font-weight-bold" for="web">Web:</label>
+																			<div class="input-group">
+																				<input type="text" class="form-control" id="web" name="web" placeholder="web" autocomplete="off">
+																			</div>
+																		</div>
+																	</div>
+																</div><!-- ./ fin row-2 -->
+																<div class="row">
+																	<div class="col-md-12">
+																		<div class="row"><!-- row-1 -->
+																			<div class="col-sm-9">
+																				<div class="form-group">
+																					<label class="form-label font-weight-bold" for="dirpostal">Calle:</label>
+																					<input id="dirpostal" class="form-control" type="text" name="dirpostal" placeholder="Calle" autocomplete="off">
+																				</div>
+																			</div>
+																			<div class="col-sm-3">
+																				<div class="form-group">
+																					<label class="form-label font-weight-bold" for="codpostal">Código postal:</label>
+																					<input id="codpostal" class="form-control" type="text" name="codpostal" placeholder="Cod. Postal" autocomplete="off">
+																				</div>
+																			</div>
+																		</div><!-- Fin row-2 -->
+																		<div class="row"><!-- row-1 -->
+																			<div class="col-sm-4">
+																				<div class="form-group">
+																					<label class="form-label font-weight-bold" for="ciudadpostal">Ciudad:</label>
+																					<input id="ciudadpostal" class="form-control" type="text" name="ciudadpostal" placeholder="Ciudad" autocomplete="off">
+																				</div>
+																			</div>
+																			<div class="col-sm-4">
+																				<div class="form-group">
+																					<label class="form-label font-weight-bold" for="estpostal">Estado/Provincia:</label>
+																					<input id="estpostal" class="form-control" type="text" name="estpostal" placeholder="Estado/Provincia" autocomplete="off">
+																				</div>
+																			</div>
+																			<div class="mb-3 col-sm-4">
+																				<div class="form-group">
+																					<label class="form-label font-weight-bold" for="paispostal">País:</label>
+																					<input id="paispostal" class="form-control" type="text" name="paispostal" placeholder="País" autocomplete="off">
+																				</div>
+																			</div>
+																		</div><!-- Fin row-2 -->
+																		<div class="row mb-1"><!-- row-3 -->
+																			<div class="col-sm-3">
+																				<div class="form-group">
+																					<label class="form-label font-weight-bold" for="linkedin">Linkedin:</label>
+																					<div class="input-group">
+																						<input type="text" class="form-control" id="linkedin" name="linkedin" placeholder="linkedin" autocomplete="off">
+																					</div>
+																				</div>
+																			</div>
+																			<div class="col-sm-3">
+																				<div class="form-group">
+																					<label class="form-label font-weight-bold" for="facebook">Facebook:</label>
+																					<div class="input-group">
+																						<input type="text" class="form-control" id="facebook" name="facebook" placeholder="facebook" autocomplete="off">
+																					</div>
+																				</div>
+																			</div>
+																			<div class="col-sm-3">
+																				<div class="form-group">
+																					<label class="form-label font-weight-bold" for="twitter">Twitter:</label>
+																					<div class="input-group">
+																						<input type="text" class="form-control" id="twitter" name="twitter" placeholder="twitter" autocomplete="off">
+																					</div>
+																				</div>
+																			</div>
+																			<div class="col-sm-3">
+																				<div class="form-group">
+																					<label class="form-label font-weight-bold" for="vimeo">Vimeo:</label>
+																					<div class="input-group">
+																						<input type="text" class="form-control" id="vimeo" name="vimeo" placeholder="vimeo" autocomplete="off">
+																					</div>
+																				</div>
+																			</div>
+																		</div><!-- ./ fin row-3 -->
+																		<div class="row"><!-- row-5 -->
+																			<div class="col-md-12">
+																				<div class="form-group">
+																					<label class="form-label font-weight-bold" for="notas">Notas:</label>
+																					<textarea class="form-control" id="notas" name="notas" rows="2" placeholder="Notas" autocomplete="off"></textarea>
+																				</div>
+																			</div>
+																		</div><!-- ./ fin row-5 -->
+																	</div>
+																</div>
+																<div style="background-color: lightgrey;  border-radius: 25px; margin-top: 20px;">
+																	<p class="form-label font-weight-bold mb-2" style="margin-left: 10px; padding: 3px;">Datos corporativos del contacto para el cliente:</p>
+																</div>
+															</div>
+															<div class="row">
+																<div class="col-sm-9 col-md-9">
+																	<div class="form-group">
+																		<label class="form-label font-weight-bold" for="Cargo">Cargo:</label>
+																		<input id="cargo2" class="form-control" type="text" name="cargo" autocomplete="off">
+																	</div>
+																</div>
+																<div class="col-md-2 text-center">
+																	<div class="form-group">
+																		<legend class="font-weight-bold">Autorizado</legend>
+																		<label>
+																			<input class="form-check-input" type="radio" name="autorizado" id="autorizado_si2" value="Si"> Sí
+																		</label>
+																		<label class="pl-sm-3">
+																			<input class="form-check-input" type="radio" name="autorizado" id="autorizado_no2" value="No" checked=""> No
+																		</label>
+																	</div>
+																	<!--small class="help-block">Define si el equipo es alquilable o no</small-->
+																</div>
+															</div>
+															<div class="row mb-4">
+																<div class="col-sm-5 col-md-5">
+																	<div class="form-group">
+																		<label class="form-label font-weight-bold" for="departamento">Departamento:</label>
+																		<input id="departamento2" class="form-control" type="text" name="departamento" autocomplete="off">
+																	</div>
+																</div>
+																<div class="col-sm-3 col-md-3">
+																	<div class="form-group">
+																		<label class="form-label font-weight-bold" for="tlfcorporativo">Tlf. corporativo:</label>
+																		<input id="tlfcorporativo" class="form-control formatoTlf" type="text" name="tlfcorporativo" autocomplete="off">
+																	</div>
+																</div>
+																<div class="col-sm-4 col-md-4">
+																	<div class="form-group">
+																		<label class="form-label font-weight-bold" for="emailcorporativo">Email corporativo:</label>
+																		<input id="emailcorporativo" class="form-control" type="text" name="emailcorporativo" autocomplete="off">
+																	</div>
+																</div>
+															</div>
+														</div>
+														<div class="row mb-3">
+															<div class="col-sm-6" style="display: flex; margin: 0 auto; width: auto; gap: 35px;">
+																<div class="form-check">
+																	<input class="form-check-input" type="checkbox" id="ccpresupuesto2" name="ccpresupuesto" value="1">
+																	<label class="form-check-label font-weight-bold" for="ccpresupuesto">
+																		¿Añadir en copia en presupuestos?
+																	</label>
+																</div>
+
+																<div class="form-check">
+																	<input class="form-check-input" type="checkbox" id="ccfactura2" name="ccfactura" value="1">
+																	<label class="form-check-label font-weight-bold" for="ccfactura">
+																		¿Añadir en copia en facturas?
+																	</label>
+																</div>
+															</div>
+														</div>
+														<div class="modal-footer">
+															<button type="button" class="irAtras btn btn-lg btn-secondary d-flex align-items-center"><i class="fas fa-arrow-left me-2"></i> Volver</button>
+															<div class="ms-auto">
+																<button type="button" class="btn btn-lg btn-danger" data-dismiss="modal">Cerrar</button>
+																<button type="submit" id="recpconcli" name="recpconcli" class="btn btn-lg btn-primary" value="Send">Grabar contacto</button>
+															</div>
+														</div>
+													</form>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="modal fade" id="creardepartamento_<?php echo $id; ?>" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+									<div class="modal-dialog modal-dialog-centered modal-lg">
+										<div class="modal-content">
+											<div class="modal-header">
+												<h4 class="modal-title" id="myModalLabel">Agregar departamento para la empresa:<strong><?php echo $nom . "<br>"; ?></strong></h4>
+												<button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
+											</div>
+											<div class="container-fluid">													
+												<form class="form" role="form" action="recform-addpcontacto-emp.php?crearDepartamento=true" method="POST" id="crearDepartamento" enctype="multipart/form-data">
+													<div class="modal-body" style="overflow: auto;">
+														<input type="hidden" class="form-control" name="idempresa" value="<?php echo $row['id']; ?>">
+														<input type="hidden" class="form-control" id="nombreempresa2" name="nombreempresa" value="<?php echo $nom; ?>">
+
+														<div class="row mb-4">
+															<div class="col-sm-5 col-md-5">
+																<div class="form-group">
+																	<label class="form-label font-weight-bold" for="departamento">Departamento:</label>
+																	<input id="departamento2" class="form-control" type="text" name="departamento" autocomplete="off">
+																</div>
+															</div>
+															<div class="col-sm-3 col-md-3">
+																<div class="form-group">
+																	<label class="form-label font-weight-bold" for="tlfcorporativoDep">Tlf. corporativo:</label>
+																	<input id="tlfcorporativoDep" class="form-control formatoTlf" type="text" name="tlfcorporativoDep" autocomplete="off">
+																</div>
+															</div>
+															<div class="col-sm-4 col-md-4">
+																<div class="form-group">
+																	<label class="form-label font-weight-bold" for="emailcorporativoDep">Email corporativo:</label>
+																	<input id="emailcorporativoDep" class="form-control" type="text" name="emailcorporativoDep" autocomplete="off">
+																</div>
+															</div>
+														</div>
+
+														<div class="row mb-3">
+															<div class="col-sm-6" style="display: flex; margin: 0 auto; width: auto; gap: 35px;">
+																<div class="form-check">
+																	<input class="form-check-input" type="checkbox" id="ccpresupuesto3" name="ccpresupuesto" value="1">
+																	<label class="form-check-label font-weight-bold" for="ccpresupuesto">
+																		¿Añadir en copia en presupuestos?
+																	</label>
+																</div>
+
+																<div class="form-check">
+																	<input class="form-check-input" type="checkbox" id="ccfactura3" name="ccfactura" value="1">
+																	<label class="form-check-label font-weight-bold" for="ccfactura">
+																		¿Añadir en copia en facturas?
+																	</label>
+																</div>
+															</div>
+														</div>
+														<div class="modal-footer">
+															<div class="ms-auto">
+																<button type="button" class="btn btn-lg btn-danger" data-dismiss="modal">Cerrar</button>
+																<button type="submit" name="adddep" id="adddep" class="btn btn-lg btn-primary" value="Enviar">Agregar</button>
+															</div>
+														</div>
+													</div>
+												</form>
+											</div>
+										</div>
+									</div>
+								</div>
+								<!-- END modal -->
+							</div>
+						</div>
+
+
+
+
+						<td><a href='editar_contacto.php?id=" . $contacto['id'] . "'>" . htmlspecialchars($contacto['nombre']) . "</a></td>

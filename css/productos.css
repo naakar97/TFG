@@ -1,0 +1,6 @@
+.container.text-center {
+    background-color: white;
+    padding: 20px; /* Opcional: agrega un poco de espacio interno */
+    border-radius: 8px; /* Opcional: bordes redondeados */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Opcional: agrega una sombra para destacar */
+}
